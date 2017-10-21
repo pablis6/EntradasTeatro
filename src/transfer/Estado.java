@@ -12,7 +12,8 @@ public enum Estado {
 	SELECCIONADA("S", "Seleccionada", "/img/seleccionado.png"),
 	OCUPADA("O", "Ocupada", "/img/ocupado.png"),
 	ESTROPEADA("E", "Estropeada", "/img/estropeado.png"),
-	PASILLO("P", "Pasillo", "");
+	PASILLO("P", "Pasillo", ""),
+	VACIO("X", "Vacio", "");
 	
 	private final String id, descripcion, img;
 
@@ -43,5 +44,13 @@ public enum Estado {
 		return img;
 	}
 
+	public static Estado fromId(String id) {
+		for (Estado estado : Estado.values()) {
+	      if (estado.id.equalsIgnoreCase(id)) {
+	        return estado;
+	      }
+	    }
+	    return null;
+	}
 	
 }

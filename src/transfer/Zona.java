@@ -9,7 +9,7 @@ package transfer;
  */
 public enum Zona {	
 	PATIO_BUTACAS ("P", "Patio de butacas"),
-	ENTRESUELO ("E", "Entresuleo");
+	ENTRESUELO ("E", "Entresuelo");
 
 	private final String id, descripcion;
 
