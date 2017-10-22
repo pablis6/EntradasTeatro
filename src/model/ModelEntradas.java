@@ -28,11 +28,6 @@ public class ModelEntradas {
 	 */
 	public ModelEntradas() {
 		plano = new ArrayList<List<Butaca>>();
-//		try {
-//			leerFichero("src/plano.txt");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
 	}
 	
 	public void leerPlano(String fecha, String sesion) throws IOException{
@@ -46,21 +41,24 @@ public class ModelEntradas {
 			for (Zona zona : Zona.values()) {//para cada zona del teatro, se leen los planos
 				ruta = "planos/" + fecha + "-" + sesion + zona.getId() + ".txt";
 				in = new FileInputStream(ruta);
-	    		int fila = 1;
+	    		int fila = 0;
 	    		
 		        while((tipoButacaInt = in.read())!=-1) {
 		        	tipoButaca = (String.valueOf( (char)tipoButacaInt) );
-		        	if(!tipoButaca.equalsIgnoreCase("\n")){//si es distinto de \n es que estamos en la misma fila 
-		        		int butaca = 0; //si es pasillo o vacio, este valor ira a 0;
-		        		if(!tipoButaca.equalsIgnoreCase(Estado.PASILLO.getId()) && !tipoButaca.equalsIgnoreCase(Estado.VACIO.getId())) {
+		        	if(!tipoButaca.equalsIgnoreCase("\n")){//si es distinto de \n es que estamos en la misma fila
+		        		int butaca = 0; //si es pasillo o vacio o F, este valor ira a 0;
+		        		if(!tipoButaca.equalsIgnoreCase(Estado.PASILLO.getId()) 
+		        				&& !tipoButaca.equalsIgnoreCase(Estado.VACIO.getId()) 
+		        				&& !tipoButaca.equalsIgnoreCase("F")) {
 		        			butaca = Integer.parseInt( new StringBuilder().append((char)in.read()).append((char)in.read()).toString());
 		        		}
-		        		filaPlano.add(new Butaca(fila, butaca, zona, Estado.fromId(tipoButaca)));
-	        		}
-		        	else {//cuando cambiamos de linea hay cambio de fila, asi que se guarda la fila en el plano. 
-		        		if(!(filaPlano.size() == 1 && filaPlano.get(0).getEstado() == Estado.VACIO)) {//si la fila es solo una X es pasillo horizontal y no corre el numero de fila 
-		        			fila++;
+		        		if(tipoButaca.equalsIgnoreCase("F")) {
+		        			fila = Integer.parseInt( new StringBuilder().append((char)in.read()).append((char)in.read()).toString());
+		        		} else {
+		        			filaPlano.add(new Butaca(fila, butaca, zona, Estado.fromId(tipoButaca)));
 		        		}
+	        		}
+		        	else {//se guarda la fila en el plano. 
 			        	plano.add(filaPlano);
 			    		filaPlano = new ArrayList<Butaca>();
 		        	}

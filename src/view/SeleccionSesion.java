@@ -41,6 +41,7 @@ import java.awt.Component;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JMenuItem;
+import java.awt.Rectangle;
 
 /**
  * @author Pablo
@@ -58,7 +59,8 @@ public class SeleccionSesion extends JFrame {
 		seleccionSesion = this;
 		controller = new ControladorEntradas();
 		
-		setSize(new Dimension(450, 300));
+		Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+		setBounds(Toolkit.getDefaultToolkit().getScreenSize().width/2 - 450/2, Toolkit.getDefaultToolkit().getScreenSize().height/2 - 300/2, 450, 300);
 		setResizable(false);
 		getContentPane().setLayout(null);
 

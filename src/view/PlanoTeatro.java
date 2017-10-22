@@ -43,6 +43,8 @@ import transfer.Estado;
 import transfer.Zona;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.UIManager;
+import java.awt.Cursor;
 
 /**
  * @author Pablo
@@ -58,7 +60,7 @@ public class PlanoTeatro extends JFrame {
 	
 	public PlanoTeatro(ControladorEntradas controladorEntradas) {
 		setExtendedState(Frame.MAXIMIZED_BOTH);
-		setSize(new Dimension(1382, 706));
+		setSize(new Dimension(1382, 885));
 		//operacion de cierre de ventana
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
@@ -78,40 +80,19 @@ public class PlanoTeatro extends JFrame {
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] {917};
-		gridBagLayout.rowHeights = new int[] {95, 600, 30};
+		gridBagLayout.rowHeights = new int[] {800, 85};
 		gridBagLayout.columnWeights = new double[]{1.0};
-		gridBagLayout.rowWeights = new double[]{0.0, 1.0, 0.0};
+		gridBagLayout.rowWeights = new double[]{1.0, 0.0};
 		getContentPane().setLayout(gridBagLayout);
 		
-		panelEscenario = new JPanel();
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.insets = new Insets(0, 0, 5, 0);
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 0;
-		getContentPane().add(panelEscenario, gbc_panel);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] {1300, 0};
-		gbl_panel.rowHeights = new int[]{82, 0};
-		gbl_panel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		panelEscenario.setLayout(gbl_panel);
-		
-		lblEscenario = new JLabel("ESCENARIO");
-		GridBagConstraints gbc_lblEscenario = new GridBagConstraints();
-		gbc_lblEscenario.gridx = 0;
-		gbc_lblEscenario.gridy = 0;
-		panelEscenario.add(lblEscenario, gbc_lblEscenario);
-		lblEscenario.setFont(new Font("Tahoma", Font.BOLD, 68));
-		
 		splitPane = new JSplitPane();
-		splitPane.setBounds(new Rectangle(0, 0, 0, 620));
+		splitPane.setBounds(new Rectangle(0, 0, 0, 800));
 		splitPane.setAutoscrolls(true);
 		GridBagConstraints gbc_splitPane = new GridBagConstraints();
 		gbc_splitPane.insets = new Insets(0, 10, 5, 10);
 		gbc_splitPane.fill = GridBagConstraints.BOTH;
 		gbc_splitPane.gridx = 0;
-		gbc_splitPane.gridy = 1;
+		gbc_splitPane.gridy = 0;
 		splitPane.setDividerLocation(getWidth()/2);	
 		getContentPane().add(splitPane, gbc_splitPane);
 		
@@ -238,27 +219,38 @@ public class PlanoTeatro extends JFrame {
 			idxfil++;
 		}
 		
-		panelBoton = new JPanel();
-		panelBoton.setBorder(null);
-		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
-		gbc_panel_2.fill = GridBagConstraints.BOTH;
-		gbc_panel_2.gridx = 0;
-		gbc_panel_2.gridy = 2;
-		getContentPane().add(panelBoton, gbc_panel_2);
-		GridBagLayout gbl_panel_2 = new GridBagLayout();
-		gbl_panel_2.columnWidths = new int[] {1350};
-		gbl_panel_2.rowHeights = new int[] {30, 0};
-		gbl_panel_2.columnWeights = new double[]{0.0};
-		gbl_panel_2.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		panelBoton.setLayout(gbl_panel_2);
+		panelEscenario = new JPanel();
+		GridBagConstraints gbc_panel = new GridBagConstraints();
+		gbc_panel.insets = new Insets(0, 0, 5, 0);
+		gbc_panel.fill = GridBagConstraints.BOTH;
+		gbc_panel.gridx = 0;
+		gbc_panel.gridy = 1;
+		getContentPane().add(panelEscenario, gbc_panel);
+		GridBagLayout gbl_panel = new GridBagLayout();
+		gbl_panel.columnWidths = new int[] {1252, 100, 30};
+		gbl_panel.rowHeights = new int[]{82, 0};
+		gbl_panel.columnWeights = new double[]{0.0, 0.0, 0.0};
+		gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		panelEscenario.setLayout(gbl_panel);
+		
+		lblEscenario = new JLabel("ESCENARIO");
+		GridBagConstraints gbc_lblEscenario = new GridBagConstraints();
+		gbc_lblEscenario.insets = new Insets(0, 0, 0, 5);
+		gbc_lblEscenario.gridx = 0;
+		gbc_lblEscenario.gridy = 0;
+		panelEscenario.add(lblEscenario, gbc_lblEscenario);
+		lblEscenario.setFont(new Font("Tahoma", Font.BOLD, 68));
 		
 		btnImprimir = new JButton("Imprimir");
+		btnImprimir.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnImprimir.setBorder(UIManager.getBorder("Button.border"));
 		btnImprimir.setFont(new Font("Tahoma", Font.BOLD, 11));
 		GridBagConstraints gbc_btnImprimir = new GridBagConstraints();
-		gbc_btnImprimir.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnImprimir.gridx = 0;
+		gbc_btnImprimir.insets = new Insets(0, 0, 0, 5);
+		gbc_btnImprimir.fill = GridBagConstraints.BOTH;
+		gbc_btnImprimir.gridx = 1;
 		gbc_btnImprimir.gridy = 0;
-		panelBoton.add(btnImprimir, gbc_btnImprimir);
+		panelEscenario.add(btnImprimir, gbc_btnImprimir);
 
 	}
 	
