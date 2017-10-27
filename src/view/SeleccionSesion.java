@@ -125,7 +125,7 @@ public class SeleccionSesion extends JFrame {
 					//TODO mensaje de error al leer los planos
 				}
 				//se abre el plano de la fecha y sesion.
-				new PlanoTeatro(controller).setVisible(true);
+				new PlanoTeatro2(controller).setVisible(true);
 				seleccionSesion.setVisible(false);
 			}
 		});

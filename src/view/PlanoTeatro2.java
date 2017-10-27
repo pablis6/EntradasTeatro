@@ -5,6 +5,7 @@ package view;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
@@ -12,7 +13,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,10 +22,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -34,41 +32,36 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JSplitPane;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
 import controller.ControladorEntradas;
 import transfer.Butaca;
 import transfer.Estado;
 import transfer.Zona;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.UIManager;
-import java.awt.Cursor;
 
 /**
  * @author Pablo
  *
  */
-public class PlanoTeatro extends JFrame {
-	private JSplitPane splitPane;
+public class PlanoTeatro2 extends JFrame {
+	private JScrollPane scrollPlano;
+	private JPanel panelPlanoTeatro, panelPatioButacas, panelEntresuelo, panelEscenario;
 	private JLabel lblEscenario;
 	private JPopupMenu menuOpciones;
 	private JMenuItem menuItemDesocupar, menuItemEstrop_Arreg;
 	private JButton btnImprimir;
-	private JPanel panelEscenario, panelPatioButacas, panelEntresuelo, panelBoton;
 	private List<Butaca> seleccionadas = new ArrayList<Butaca>();
 	private List<JButton> botones = new ArrayList<JButton>();
 	
-	public PlanoTeatro(ControladorEntradas controladorEntradas) {
+	public PlanoTeatro2(ControladorEntradas controladorEntradas) {
 		setExtendedState(Frame.MAXIMIZED_BOTH);
 		setSize(new Dimension(1382, 885));
 		//operacion de cierre de ventana
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
         	public void windowClosing(WindowEvent evt ) {
-        		if(JOptionPane.showConfirmDialog(PlanoTeatro.this, "¿Quieres salir?", "Confirmacion de salida", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
+        		if(JOptionPane.showConfirmDialog(PlanoTeatro2.this, "¿Quieres salir?", "Confirmacion de salida", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
 					System.exit(0);
         		}
         	}
@@ -80,47 +73,56 @@ public class PlanoTeatro extends JFrame {
 		Toolkit kit = Toolkit.getDefaultToolkit();
 		Image img = kit.createImage(pathIcon);
 		this.setIconImage(img);
+	
+		GridBagLayout gbl_panelPrincipal = new GridBagLayout();
+		gbl_panelPrincipal.columnWidths = new int[] {0};
+		gbl_panelPrincipal.rowHeights = new int[] {0, 82};
+		gbl_panelPrincipal.columnWeights = new double[]{1.0};
+		gbl_panelPrincipal.rowWeights = new double[]{1.0, 0.0};
+		getContentPane().setLayout(gbl_panelPrincipal);
 		
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] {917};
-		gridBagLayout.rowHeights = new int[] {800, 85};
-		gridBagLayout.columnWeights = new double[]{1.0};
-		gridBagLayout.rowWeights = new double[]{1.0, 0.0};
-		getContentPane().setLayout(gridBagLayout);
+		scrollPlano = new JScrollPane();
+		scrollPlano.setAutoscrolls(true);
+		GridBagConstraints gbc_scrollPlano = new GridBagConstraints();
+		gbc_scrollPlano.insets = new Insets(10, 10, 10, 10);
+		gbc_scrollPlano.fill = GridBagConstraints.BOTH;
+		gbc_scrollPlano.gridx = 0;
+		gbc_scrollPlano.gridy = 0;
+		getContentPane().add(scrollPlano, gbc_scrollPlano);
 		
-		splitPane = new JSplitPane();
-		splitPane.setBounds(new Rectangle(0, 0, 0, 800));
-		splitPane.setAutoscrolls(true);
-		GridBagConstraints gbc_splitPane = new GridBagConstraints();
-		gbc_splitPane.insets = new Insets(0, 10, 5, 10);
-		gbc_splitPane.fill = GridBagConstraints.BOTH;
-		gbc_splitPane.gridx = 0;
-		gbc_splitPane.gridy = 0;
-		splitPane.setDividerLocation(getWidth()/2);	
-		getContentPane().add(splitPane, gbc_splitPane);
+		panelPlanoTeatro = new JPanel();
+		panelPlanoTeatro.setAutoscrolls(true);
+		panelPlanoTeatro.setBackground(new Color(255, 153, 0));
+		scrollPlano.setViewportView(panelPlanoTeatro);
+		panelPlanoTeatro.setLayout(null);
+		
+//		int maxFilasE = 10;
+//		int maxColsE = 40;
+//		int maxFilasP = 20;
+//		int maxColsP = 40;
+//		int tamBoton = 40;
+
+		int MAX_COL_P = 0;
+		int MAX_FIL_P = 0;
+		int MAX_COL_E = 0;
+		int MAX_FIL_E = 0;
+		int tamBoton = 25;
+		int tamBotonEspacio = 27;
 		
 		panelPatioButacas = new JPanel();
-		panelPatioButacas.setPreferredSize(new Dimension(10, 620));
-		panelPatioButacas.setMinimumSize(new Dimension(10, 620));
-		panelPatioButacas.setMaximumSize(new Dimension(32767, 620));
-		panelPatioButacas.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		panelPatioButacas.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "PATIO DE BUTACAS", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panelPatioButacas.setAutoscrolls(true);
-		panelPatioButacas.setBounds(new Rectangle(0, 0, 200, 620));
-		splitPane.setLeftComponent(panelPatioButacas);
+		panelPatioButacas.setBackground(new Color(255, 153, 204));
+//		panelPatioButacas.setBounds(0, 0, maxColsP*tamBoton, maxFilasP*tamBoton);
 		panelPatioButacas.setLayout(null);
+		panelPlanoTeatro.add(panelPatioButacas);
 		
 		panelEntresuelo = new JPanel();
-		panelEntresuelo.setBounds(new Rectangle(0, 0, 0, 620));
-		panelEntresuelo.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "ENTRESUELO", TitledBorder.CENTER, TitledBorder.BELOW_TOP, null, null));
-		panelEntresuelo.setAutoscrolls(true);
-		splitPane.setRightComponent(panelEntresuelo);
-		panelEntresuelo.setLayout(null);	
-		
-		ControladorEntradas controller = controladorEntradas;
+		panelEntresuelo.setBackground(new Color(102, 255, 0));
+//		panelEntresuelo.setBounds((maxColsP+1)*tamBoton, 0, maxColsE*tamBoton, maxFilasE*tamBoton);
+		panelEntresuelo.setLayout(null);
+		panelPlanoTeatro.add(panelEntresuelo);
 		
 		//carga de plano
-		List<List<Butaca>> plano = controller.obtenerPlano();
+		List<List<Butaca>> plano = controladorEntradas.obtenerPlano();
 		int idxfil = 0;
 		Butaca butacaAnterior = null;
 		for (List<Butaca> fila : plano) {
@@ -150,7 +152,7 @@ public class PlanoTeatro extends JFrame {
 						
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							if(JOptionPane.showConfirmDialog(PlanoTeatro.this, "Esta butaca esta ocupada por otra persona. ¿Quieres desocuparla?", "¿Desocupar butaca?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+							if(JOptionPane.showConfirmDialog(PlanoTeatro2.this, "Esta butaca esta ocupada por otra persona. ¿Quieres desocuparla?", "¿Desocupar butaca?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 								butaca.setEstado(Estado.LIBRE);
 								Image icono = new ImageIcon(getClass().getResource(butaca.getEstado().getImg())).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
 								boton.setIcon(new ImageIcon(icono));
@@ -186,7 +188,7 @@ public class PlanoTeatro extends JFrame {
 				}
 				
 				boton.setBorder(null);
-				boton.setBounds(10+(idxcol*27), 20+(idxfil*27), 25, 25);
+				boton.setBounds(tamBotonEspacio+(idxcol*tamBotonEspacio), tamBotonEspacio+(idxfil*tamBotonEspacio), tamBoton, tamBoton);
 				if(butaca.getZona() == Zona.PATIO_BUTACAS) {panelPatioButacas.add(boton);}
 				if(butaca.getZona() == Zona.ENTRESUELO) {panelEntresuelo.add(boton);}
 				
@@ -204,7 +206,7 @@ public class PlanoTeatro extends JFrame {
 							seleccionadas.removeIf((Butaca b ) -> b.getButaca() == butaca.getButaca() && b.getFila() == butaca.getFila() && b.getZona() == butaca.getZona());
 						}
 						if(butaca.getEstado() == Estado.OCUPADA) {
-							JOptionPane.showMessageDialog(PlanoTeatro.this, "Esta butaca esta ocupada por otra persona. Tienes que vaciarla primero", "Butaca ocupada", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(PlanoTeatro2.this, "Esta butaca esta ocupada por otra persona. Tienes que vaciarla primero", "Butaca ocupada", JOptionPane.ERROR_MESSAGE);
 						}
 						boton.setName(butaca.getEstado().getDescripcion());
 						Image icono = new ImageIcon(getClass().getResource(butaca.getEstado().getImg())).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
@@ -226,23 +228,35 @@ public class PlanoTeatro extends JFrame {
 			idxfil++;
 		}
 		
+		//calculo de filas y columnas
+		MAX_FIL_P = controladorEntradas.countFilas(Zona.PATIO_BUTACAS);
+		MAX_FIL_E = controladorEntradas.countFilas(Zona.ENTRESUELO);
+		MAX_COL_P = controladorEntradas.countColumnas(Zona.PATIO_BUTACAS);
+		MAX_COL_E = controladorEntradas.countColumnas(Zona.ENTRESUELO);
+		
+		//tamaños de los paneles
+		panelPatioButacas.setBounds(0, 0, (2+MAX_COL_P)*tamBotonEspacio, (2+MAX_FIL_P)*tamBotonEspacio);
+		panelEntresuelo.setBounds(panelPatioButacas.getWidth(), 0, (2+MAX_COL_E)*tamBotonEspacio, (2+MAX_FIL_E)*tamBotonEspacio);
+		
+		panelPlanoTeatro.setPreferredSize(new Dimension(panelPatioButacas.getWidth() + panelEntresuelo.getWidth(), panelPatioButacas.getHeight()));
+		
 		panelEscenario = new JPanel();
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.insets = new Insets(0, 0, 5, 0);
-		gbc_panel.gridx = 0;
-		gbc_panel.gridy = 1;
-		getContentPane().add(panelEscenario, gbc_panel);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[] {1252, 100, 30};
-		gbl_panel.rowHeights = new int[]{82, 0};
-		gbl_panel.columnWeights = new double[]{1.0, 0.0, 0.0};
-		gbl_panel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-		panelEscenario.setLayout(gbl_panel);
+		GridBagConstraints gbc_panelEscenario = new GridBagConstraints();
+		gbc_panelEscenario.fill = GridBagConstraints.BOTH;
+		gbc_panelEscenario.insets = new Insets(0, 0, 5, 10);
+		gbc_panelEscenario.gridx = 0;
+		gbc_panelEscenario.gridy = 1;
+		getContentPane().add(panelEscenario, gbc_panelEscenario);
+		
+		GridBagLayout gbl_PanelSecundario = new GridBagLayout();
+		gbl_PanelSecundario.columnWidths = new int[] {1282, 100};
+		gbl_PanelSecundario.rowHeights = new int[]{82, 0};
+		gbl_PanelSecundario.columnWeights = new double[]{1.0, 0.0};
+		gbl_PanelSecundario.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		panelEscenario.setLayout(gbl_PanelSecundario);
 		
 		lblEscenario = new JLabel("ESCENARIO");
 		GridBagConstraints gbc_lblEscenario = new GridBagConstraints();
-		gbc_lblEscenario.insets = new Insets(0, 0, 0, 5);
 		gbc_lblEscenario.gridx = 0;
 		gbc_lblEscenario.gridy = 0;
 		panelEscenario.add(lblEscenario, gbc_lblEscenario);
@@ -253,38 +267,13 @@ public class PlanoTeatro extends JFrame {
 		btnImprimir.setBorder(UIManager.getBorder("Button.border"));
 		btnImprimir.setFont(new Font("Tahoma", Font.BOLD, 11));
 		GridBagConstraints gbc_btnImprimir = new GridBagConstraints();
-		gbc_btnImprimir.insets = new Insets(0, 0, 0, 5);
 		gbc_btnImprimir.fill = GridBagConstraints.BOTH;
 		gbc_btnImprimir.gridx = 1;
 		gbc_btnImprimir.gridy = 0;
 		panelEscenario.add(btnImprimir, gbc_btnImprimir);
-		
-		btnImprimir.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				controladorEntradas.imprimir(seleccionadas);
-				
-				for (JButton boton : botones) {
-					if(boton.getName() == Estado.SELECCIONADA.getDescripcion()) {
-						Image icono = new ImageIcon(getClass().getResource(Estado.OCUPADA.getImg())).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-						boton.setIcon(new ImageIcon(icono));
-					}
-				}
-				for (List<Butaca> list : plano) {
-					for (Butaca butaca : list) {
-						if(butaca.getEstado().equals(Estado.SELECCIONADA)) {
-							butaca.setEstado(Estado.OCUPADA);
-						}
-						
-					}
-				}
-			}
-		});
-
 	}
 	
-	private static void addPopup(Component component, final JPopupMenu popup, Butaca butaca) {
+private static void addPopup(Component component, final JPopupMenu popup, Butaca butaca) {
 		
 		
 		component.addMouseListener(new MouseAdapter() {

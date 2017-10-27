@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import transfer.Butaca;
@@ -119,5 +120,36 @@ public class ModelEntradas {
 		} catch (IOException e) {
 			
 		}
+	}
+
+	public void imprimir(List<Butaca> seleccionadas) {
+		Collections.sort(seleccionadas, Butaca.butacaComparator);
+		//guardar en txt 
+		
+		System.out.println("Butacas seleccionadas: \n" + seleccionadas);
+		
+	}
+	
+	public int countFilas(Zona zona) {
+		int contador = 0;
+		for(int i = 0; i < plano.size(); i++) {
+			if(plano.get(i).get(0).getZona() == zona) {
+				contador++;
+			}
+		}
+		return contador;
+	}
+	
+	public int countColumnas(Zona zona) {
+		boolean parar = false;
+		int i = 0, contador = 0;
+		while(!parar) {
+			if(plano.get(i).get(0).getZona() == zona) {
+				contador = plano.get(i).size();
+				parar = true;
+			}
+			i++;
+		}
+		return contador;
 	}
 }

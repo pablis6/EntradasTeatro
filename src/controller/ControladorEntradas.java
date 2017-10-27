@@ -9,6 +9,7 @@ import java.util.List;
 
 import model.ModelEntradas;
 import transfer.Butaca;
+import transfer.Zona;
 
 /**
  * @author Pablo
@@ -35,6 +36,18 @@ public class ControladorEntradas {
 
 	public void leerPlano(String fecha, String sesion) throws IOException {
 		modelEntradas.leerPlano(fecha, sesion);
+	}
+
+	public void imprimir(List<Butaca> seleccionadas) {
+		modelEntradas.imprimir(seleccionadas);
+	}
+
+	public int countFilas(Zona zona) {
+		return modelEntradas.countFilas(zona);
+	}
+
+	public int countColumnas(Zona zona) {
+		return modelEntradas.countColumnas(zona);
 	}
 	
 	
