@@ -5,6 +5,7 @@ package main;
 
 import java.io.IOException;
 
+import controller.ControladorConfiguracion;
 import view.SeleccionSesion;
 
 /**
@@ -18,7 +19,9 @@ public class Main {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args)  {
-		new SeleccionSesion().setVisible(true);
+		ControladorConfiguracion controladorConfiguracion = new ControladorConfiguracion();
+		
+		new SeleccionSesion(controladorConfiguracion).setVisible(true);
 	}
 
 	
