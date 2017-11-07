@@ -181,6 +181,7 @@ public class PlanoTeatro2 extends JFrame {
 						pintaPlano(controladorEntradas.obtenerPlano());
 					}
 				}
+				seleccionadas = new ArrayList<Butaca>();
 			}
 		});
 	}
@@ -247,11 +248,11 @@ public class PlanoTeatro2 extends JFrame {
 						public void actionPerformed(ActionEvent e) {
 							if(butaca.getEstado() == Estado.ESTROPEADA) {
 								butaca.setEstado(Estado.LIBRE);
-								System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
+								//System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
 							}
 							else {
 								butaca.setEstado(Estado.ESTROPEADA);
-								System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
+								//System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
 							}
 							controladorEntradas.setButacaPlano(butaca);
 							pintaPlano(controladorEntradas.obtenerPlano());
@@ -285,7 +286,7 @@ public class PlanoTeatro2 extends JFrame {
 						Toolkit kit = Toolkit.getDefaultToolkit();
 						Image icono = kit.createImage(butaca.getEstado().getImg()).getScaledInstance(tamBoton, tamBoton, Image.SCALE_SMOOTH);
 						boton.setIcon(new ImageIcon(icono));
-						System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
+						//System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
 												
 					}
 				});
