@@ -273,28 +273,32 @@ public class ModelEntradas {
 			System.out.println("A nombre de... " + (this.nombre != null ? this.nombre : "") );
 		}
 		int numFila = 0;
-		Zona zona = null;
+		Zona zona = null, zonaAnterior = null;
 		List<String> fila = null;
 		for (Butaca butaca : seleccionadas) {
-			if(zona != butaca.getZona()) {
-				zona = butaca.getZona();
-			}
-			if(numFila != butaca.getFila()) {
+				
+			if(numFila != butaca.getFila() || zona != butaca.getZona()) {
 				if(fila != null) {
 					System.out.println(String.join(", ", fila));
 				}
 				
 				numFila = butaca.getFila();
+				zona = butaca.getZona();
+				if(zonaAnterior != zona) {
+					System.out.println("***" + zona.getDescripcion() + "***");
+				}
+				zonaAnterior = zona;
 				System.out.println("Fila: " + numFila);
 				System.out.print("Butacas: ");
 				fila = new ArrayList<String>();
 			}
 			fila.add(Integer.toString(butaca.getButaca()));
+			
 		}
 		if(fila != null) {
 			System.out.println(String.join(", ", fila));
 		}
-		System.out.println("Butacas seleccionadas: \n" + seleccionadas);
+		//System.out.println("Butacas seleccionadas: \n" + seleccionadas);
 		
 	}
 	
