@@ -52,7 +52,7 @@ public class prueba extends JFrame {
         	}
 		});
 		
-		this.setTitle("Entradas Teatro La Menais - Seleccion butaca");
+		this.setTitle("Entradas Teatro La Mennais - Seleccion butaca");
 		//icono APP
 		URL pathIcon = this.getClass().getClassLoader().getResource("img/icono-Mene-192x192.png");
 		Toolkit kit = Toolkit.getDefaultToolkit();

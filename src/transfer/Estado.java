@@ -8,10 +8,10 @@ package transfer;
  * @descripcion enumerador de los estados de las butacas.
  */
 public enum Estado {
-	LIBRE("L", "Libre", "/img/libre.png"),
-	SELECCIONADA("S", "Seleccionada", "/img/seleccionado.png"),
-	OCUPADA("O", "Ocupada", "/img/ocupado.png"),
-	ESTROPEADA("E", "Estropeada", "/img/estropeado.png"),
+	LIBRE("L", "Libre", "img/libre.png"),
+	SELECCIONADA("S", "Seleccionada", "img/seleccionado.png"),
+	OCUPADA("O", "Ocupada", "img/ocupado.png"),
+	ESTROPEADA("E", "Estropeada", "img/estropeado.png"),
 	PASILLO("P", "Pasillo", ""),
 	VACIO("X", "Vacio", "");
 	

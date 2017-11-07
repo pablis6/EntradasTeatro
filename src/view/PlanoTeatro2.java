@@ -20,7 +20,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,10 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 
+import controller.ControladorConfiguracion;
 import controller.ControladorEntradas;
 import transfer.Butaca;
 import transfer.Estado;
@@ -45,6 +47,7 @@ import transfer.Zona;
  *
  */
 public class PlanoTeatro2 extends JFrame {
+	private ControladorEntradas controladorEntradas;
 	private JScrollPane scrollPlano;
 	private JPanel panelPlanoTeatro, panelPatioButacas, panelEntresuelo, panelEscenario;
 	private JLabel lblEscenario;
@@ -52,9 +55,19 @@ public class PlanoTeatro2 extends JFrame {
 	private JMenuItem menuItemDesocupar, menuItemEstrop_Arreg;
 	private JButton btnImprimir;
 	private List<Butaca> seleccionadas = new ArrayList<Butaca>();
-	private List<JButton> botones = new ArrayList<JButton>();
 	
-	public PlanoTeatro2(ControladorEntradas controladorEntradas) {
+	private int MAX_COL_P = 0;
+	private int MAX_FIL_P = 0;
+	private int MAX_COL_E = 0;
+	private int MAX_FIL_E = 0;
+	private int tamBoton;
+	private int tamBotonEspacio = 0;
+	
+	public PlanoTeatro2(ControladorEntradas ctrlEntradas, ControladorConfiguracion controladorConfiguracion) {
+		controladorEntradas = ctrlEntradas;
+		tamBoton = Integer.parseInt(controladorConfiguracion.getPropiedades().getProperty("TAM_BUTACA"));
+		tamBotonEspacio = tamBoton+2;
+		
 		setExtendedState(Frame.MAXIMIZED_BOTH);
 		setSize(new Dimension(1382, 885));
 		//operacion de cierre de ventana
@@ -67,11 +80,10 @@ public class PlanoTeatro2 extends JFrame {
         	}
 		});
 		
-		this.setTitle("Entradas Teatro La Menais - Seleccion butaca");
+		this.setTitle("Entradas Teatro La Mennais - Seleccion butaca " + controladorEntradas.getFecha() + "-" + controladorEntradas.getSesion());
 		//icono APP
-		URL pathIcon = this.getClass().getClassLoader().getResource("img/icono-Mene-192x192.png");
 		Toolkit kit = Toolkit.getDefaultToolkit();
-		Image img = kit.createImage(pathIcon);
+		Image img = kit.createImage("img/icono-Mene-192x192.png");
 		this.setIconImage(img);
 	
 		GridBagLayout gbl_panelPrincipal = new GridBagLayout();
@@ -82,7 +94,6 @@ public class PlanoTeatro2 extends JFrame {
 		getContentPane().setLayout(gbl_panelPrincipal);
 		
 		scrollPlano = new JScrollPane();
-		scrollPlano.setAutoscrolls(true);
 		GridBagConstraints gbc_scrollPlano = new GridBagConstraints();
 		gbc_scrollPlano.insets = new Insets(10, 10, 10, 10);
 		gbc_scrollPlano.fill = GridBagConstraints.BOTH;
@@ -91,148 +102,28 @@ public class PlanoTeatro2 extends JFrame {
 		getContentPane().add(scrollPlano, gbc_scrollPlano);
 		
 		panelPlanoTeatro = new JPanel();
-		panelPlanoTeatro.setAutoscrolls(true);
 		panelPlanoTeatro.setBackground(new Color(255, 153, 0));
 		scrollPlano.setViewportView(panelPlanoTeatro);
 		panelPlanoTeatro.setLayout(null);
 		
-//		int maxFilasE = 10;
-//		int maxColsE = 40;
-//		int maxFilasP = 20;
-//		int maxColsP = 40;
-//		int tamBoton = 40;
-
-		int MAX_COL_P = 0;
-		int MAX_FIL_P = 0;
-		int MAX_COL_E = 0;
-		int MAX_FIL_E = 0;
-		int tamBoton = 25;
-		int tamBotonEspacio = 27;
-		
 		panelPatioButacas = new JPanel();
 		panelPatioButacas.setBackground(new Color(255, 153, 204));
-//		panelPatioButacas.setBounds(0, 0, maxColsP*tamBoton, maxFilasP*tamBoton);
 		panelPatioButacas.setLayout(null);
 		panelPlanoTeatro.add(panelPatioButacas);
 		
 		panelEntresuelo = new JPanel();
 		panelEntresuelo.setBackground(new Color(102, 255, 0));
-//		panelEntresuelo.setBounds((maxColsP+1)*tamBoton, 0, maxColsE*tamBoton, maxFilasE*tamBoton);
 		panelEntresuelo.setLayout(null);
 		panelPlanoTeatro.add(panelEntresuelo);
-		
-		//carga de plano
-		List<List<Butaca>> plano = controladorEntradas.obtenerPlano();
-		int idxfil = 0;
-		Butaca butacaAnterior = null;
-		for (List<Butaca> fila : plano) {
-			int idxcol = 0;
-			for (Butaca butaca : fila) {
-				// ponemos el contador de filas a 0 si cambia de patio a entresuelo
-				if(butacaAnterior != null && butacaAnterior.getZona() == Zona.PATIO_BUTACAS && butaca.getZona() == Zona.ENTRESUELO) {
-					idxfil = 0;
-				}
-				JButton boton = new JButton();
-				boton.setContentAreaFilled(false);
-				boton.setName(butaca.getEstado().getDescripcion());
-				
-				if(butaca.getEstado() == Estado.PASILLO) {//cuando es pasillo ponemos el numero de fila
-					boton.setText(Integer.toString(butaca.getFila()));
-				}
-				else if(butaca.getEstado() == Estado.VACIO){//cuando es vacio no ponemos ni texto ni butaca.
-				}
-				else{
-					Image icono = new ImageIcon(getClass().getResource(butaca.getEstado().getImg())).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-					boton.setIcon(new ImageIcon(icono));
-					
-					menuOpciones = new JPopupMenu();
-					
-					menuItemDesocupar = new JMenuItem("Desocupar");
-					menuItemDesocupar.addActionListener(new ActionListener() {
-						
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							if(JOptionPane.showConfirmDialog(PlanoTeatro2.this, "Esta butaca esta ocupada por otra persona. ¿Quieres desocuparla?", "¿Desocupar butaca?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-								butaca.setEstado(Estado.LIBRE);
-								Image icono = new ImageIcon(getClass().getResource(butaca.getEstado().getImg())).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-								boton.setIcon(new ImageIcon(icono));
-							}
-							System.out.println("soy la opcion de menu del boton" + "zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
-							
-						}
-					});
-					
-					menuItemEstrop_Arreg = new JMenuItem("Estropeada/Arreglada");
-					menuItemEstrop_Arreg.addActionListener(new ActionListener() {
-						
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							if(butaca.getEstado() == Estado.ESTROPEADA) {
-								butaca.setEstado(Estado.LIBRE);
-								System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
-							}
-							else {
-								butaca.setEstado(Estado.ESTROPEADA);
-								System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
-							}
-							boton.setName(butaca.getEstado().getDescripcion());
-							Image icono = new ImageIcon(getClass().getResource(butaca.getEstado().getImg())).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-							boton.setIcon(new ImageIcon(icono));
-							
-						}
-					});
 
-					menuOpciones.add(menuItemDesocupar);
-					menuOpciones.add(menuItemEstrop_Arreg);
-					addPopup(boton, menuOpciones, butaca);
-				}
-				
-				boton.setBorder(null);
-				boton.setBounds(tamBotonEspacio+(idxcol*tamBotonEspacio), tamBotonEspacio+(idxfil*tamBotonEspacio), tamBoton, tamBoton);
-				if(butaca.getZona() == Zona.PATIO_BUTACAS) {panelPatioButacas.add(boton);}
-				if(butaca.getZona() == Zona.ENTRESUELO) {panelEntresuelo.add(boton);}
-				
-				//evento click izquierdo
-				boton.addActionListener(new ActionListener() {
-					
-					@Override
-					public void actionPerformed(ActionEvent e) {						
-						if(butaca.getEstado() == Estado.LIBRE) {
-							butaca.setEstado(Estado.SELECCIONADA);
-							seleccionadas.add(butaca);
-						}
-						else if(butaca.getEstado() == Estado.SELECCIONADA) {
-							butaca.setEstado(Estado.LIBRE);
-							seleccionadas.removeIf((Butaca b ) -> b.getButaca() == butaca.getButaca() && b.getFila() == butaca.getFila() && b.getZona() == butaca.getZona());
-						}
-						if(butaca.getEstado() == Estado.OCUPADA) {
-							JOptionPane.showMessageDialog(PlanoTeatro2.this, "Esta butaca esta ocupada por otra persona. Tienes que vaciarla primero", "Butaca ocupada", JOptionPane.ERROR_MESSAGE);
-						}
-						boton.setName(butaca.getEstado().getDescripcion());
-						Image icono = new ImageIcon(getClass().getResource(butaca.getEstado().getImg())).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
-						boton.setIcon(new ImageIcon(icono));
-						System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
-						
-						
-//						Collections.sort(seleccinadas, Butaca.butacaComparator);
-//						System.out.println("Butacas seleccionadas: " + seleccinadas);
-						
-					}
-				});
-				
-				botones.add(boton);
-				
-				idxcol++;
-				butacaAnterior = butaca;
-			}
-			idxfil++;
-		}
-		
 		//calculo de filas y columnas
 		MAX_FIL_P = controladorEntradas.countFilas(Zona.PATIO_BUTACAS);
 		MAX_FIL_E = controladorEntradas.countFilas(Zona.ENTRESUELO);
 		MAX_COL_P = controladorEntradas.countColumnas(Zona.PATIO_BUTACAS);
 		MAX_COL_E = controladorEntradas.countColumnas(Zona.ENTRESUELO);
+
+		//pintar de plano
+		pintaPlano(controladorEntradas.obtenerPlano());
 		
 		//tamaños de los paneles
 		panelPatioButacas.setBounds(0, 0, (2+MAX_COL_P)*tamBotonEspacio, (2+MAX_FIL_P)*tamBotonEspacio);
@@ -271,9 +162,146 @@ public class PlanoTeatro2 extends JFrame {
 		gbc_btnImprimir.gridx = 1;
 		gbc_btnImprimir.gridy = 0;
 		panelEscenario.add(btnImprimir, gbc_btnImprimir);
+		
+		btnImprimir.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(seleccionadas.size() > 0) {
+					if(controladorEntradas.isConNombre()){
+						String nombre = JOptionPane.showInputDialog(PlanoTeatro2.this, "A nombre de...", "A nombre de...", JOptionPane.QUESTION_MESSAGE);
+						if(nombre != null) {
+							controladorEntradas.setNombre(nombre);
+							controladorEntradas.imprimir(seleccionadas);				
+							pintaPlano(controladorEntradas.obtenerPlano());
+						}
+					}
+					else {
+						controladorEntradas.imprimir(seleccionadas);				
+						pintaPlano(controladorEntradas.obtenerPlano());
+					}
+				}
+			}
+		});
 	}
 	
-private static void addPopup(Component component, final JPopupMenu popup, Butaca butaca) {
+	private void pintaPlano(List<List<Butaca>> plano) {
+		//vaciar paneles de todos los botones
+		panelPatioButacas.removeAll();
+		panelEntresuelo.removeAll();
+		
+		//totales en los bordes de los paneles
+		panelPatioButacas.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "PATIO DE BUTACAS (" + controladorEntradas.getLibresPatio() + "/" + controladorEntradas.getTotalPatio() + ")", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		panelEntresuelo.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "ENTRESUELO (" + controladorEntradas.getLibresEntresuelo() + "/" + controladorEntradas.getTotalEntresuelo() + ")", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		
+		//rellenar con todos los botones
+		int idxfil = 0;
+		Butaca butacaAnterior = null;
+		for (List<Butaca> fila : plano) {
+			int idxcol = 0;
+			for (Butaca butaca : fila) {
+				// ponemos el contador de filas a 0 si cambia de patio a entresuelo
+				if(butacaAnterior != null && butacaAnterior.getZona() == Zona.PATIO_BUTACAS && butaca.getZona() == Zona.ENTRESUELO) {
+					idxfil = 0;
+				}
+				JButton boton = new JButton();
+				boton.setContentAreaFilled(false);
+				boton.setBorder(null);
+				boton.setBounds(tamBotonEspacio+(idxcol*tamBotonEspacio), tamBotonEspacio+(idxfil*tamBotonEspacio), tamBoton, tamBoton);
+				
+				if(butaca.getEstado() == Estado.PASILLO) {//cuando es pasillo ponemos el numero de fila
+					boton.setText(Integer.toString(butaca.getFila()));
+				}
+				else if(butaca.getEstado() == Estado.VACIO){//cuando es vacio no ponemos ni texto ni butaca.
+				}
+				else{
+					Toolkit kit = Toolkit.getDefaultToolkit();
+					Image icono = kit.createImage(butaca.getEstado().getImg()).getScaledInstance(tamBoton, tamBoton, Image.SCALE_SMOOTH);
+
+					boton.setIcon(new ImageIcon(icono));
+					boton.setToolTipText(Integer.toString(butaca.getButaca()));
+					
+					menuOpciones = new JPopupMenu();
+					
+					menuItemDesocupar = new JMenuItem("Desocupar");
+					menuItemDesocupar.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							if(JOptionPane.showConfirmDialog(PlanoTeatro2.this, "Esta butaca esta ocupada por otra persona. ¿Quieres desocuparla?", "¿Desocupar butaca?", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+								butaca.setEstado(Estado.LIBRE);
+
+								controladorEntradas.setButacaPlano(butaca);
+								pintaPlano(controladorEntradas.obtenerPlano());
+							}
+							System.out.println("soy la opcion de menu del boton" + "zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
+							
+							controladorEntradas.setButacaPlano(butaca);
+						}
+					});
+					
+					menuItemEstrop_Arreg = new JMenuItem("Estropeada/Arreglada");
+					menuItemEstrop_Arreg.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							if(butaca.getEstado() == Estado.ESTROPEADA) {
+								butaca.setEstado(Estado.LIBRE);
+								System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
+							}
+							else {
+								butaca.setEstado(Estado.ESTROPEADA);
+								System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
+							}
+							controladorEntradas.setButacaPlano(butaca);
+							pintaPlano(controladorEntradas.obtenerPlano());
+						}
+					});
+
+					menuOpciones.add(menuItemDesocupar);
+					menuOpciones.add(menuItemEstrop_Arreg);
+					addPopup(boton, menuOpciones, butaca);
+				}
+				
+				if(butaca.getZona() == Zona.PATIO_BUTACAS) {panelPatioButacas.add(boton);}
+				if(butaca.getZona() == Zona.ENTRESUELO) {panelEntresuelo.add(boton);}
+				
+				//evento click izquierdo
+				boton.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {						
+						if(butaca.getEstado() == Estado.LIBRE) {
+							butaca.setEstado(Estado.SELECCIONADA);
+							seleccionadas.add(butaca);
+						}
+						else if(butaca.getEstado() == Estado.SELECCIONADA) {
+							butaca.setEstado(Estado.LIBRE);
+							seleccionadas.removeIf((Butaca b ) -> b.getButaca() == butaca.getButaca() && b.getFila() == butaca.getFila() && b.getZona() == butaca.getZona());
+						}
+						if(butaca.getEstado() == Estado.OCUPADA) {
+							JOptionPane.showMessageDialog(PlanoTeatro2.this, "Esta butaca esta ocupada por otra persona. Tienes que vaciarla primero", "Butaca ocupada", JOptionPane.ERROR_MESSAGE);
+						}
+						Toolkit kit = Toolkit.getDefaultToolkit();
+						Image icono = kit.createImage(butaca.getEstado().getImg()).getScaledInstance(tamBoton, tamBoton, Image.SCALE_SMOOTH);
+						boton.setIcon(new ImageIcon(icono));
+						System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
+												
+					}
+				});
+				
+				idxcol++;
+				butacaAnterior = butaca;
+			}
+			idxfil++;
+		}
+		
+		//forzamos el repintado
+		panelPatioButacas.repaint();
+		panelEntresuelo.repaint();
+	}
+
+	private static void addPopup(Component component, final JPopupMenu popup, Butaca butaca) {
 		
 		
 		component.addMouseListener(new MouseAdapter() {

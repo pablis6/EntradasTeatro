@@ -49,6 +49,44 @@ public class ControladorEntradas {
 	public int countColumnas(Zona zona) {
 		return modelEntradas.countColumnas(zona);
 	}
+
+	public void setButacaPlano(Butaca butaca) {
+		modelEntradas.setButacaPlano(butaca);
+	}
 	
+	public String getFecha() {
+		return modelEntradas.getFecha();
+	}
 	
+	public String getSesion() {
+		return modelEntradas.getSesion();
+	}
+
+	public boolean isConNombre() {
+		return modelEntradas.isConNombre();
+	}
+	
+	public void setConNombre(boolean selected) {
+		modelEntradas.setConNombre(selected);
+	}
+
+	public void setNombre(String nombre) {
+		modelEntradas.setNombre(nombre);
+	}
+
+	public int getLibresPatio() {
+		return modelEntradas.getLibresPatio();
+	}
+	
+	public int getTotalPatio() {
+		return modelEntradas.getTotalPatio();
+	}
+	public int getLibresEntresuelo() {
+		return modelEntradas.getLibresEntresuelo();
+	}
+	
+	public int getTotalEntresuelo() {
+		return modelEntradas.getTotalEntresuelo();
+	}
+
 }

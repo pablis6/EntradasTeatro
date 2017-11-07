@@ -4,44 +4,34 @@
 package view;
 
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
-import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
-import com.toedter.calendar.JCalendar;
-
-import controller.ControladorEntradas;
-
-import javax.swing.SpinnerNumberModel;
-import javax.swing.JButton;
-import java.awt.Cursor;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
 
-import java.awt.ComponentOrientation;
-import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
-import java.awt.Component;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.JMenuItem;
-import java.awt.Rectangle;
+import controller.ControladorConfiguracion;
+import controller.ControladorEntradas;
+import javax.swing.JCheckBox;
 
 /**
  * @author Pablo
@@ -53,14 +43,18 @@ public class SeleccionSesion extends JFrame {
 	private JDateChooser dateChooser;
 	private JButton btnComenzar;
 	private SeleccionSesion seleccionSesion;
-	private ControladorEntradas controller;
+	private ControladorEntradas controllerEntradas;
+	private JButton btnConf;
+	private JCheckBox chckbxConNombre;
 	
-	public SeleccionSesion() {
+	public SeleccionSesion(ControladorConfiguracion controllerConfiguracion) {
 		seleccionSesion = this;
-		controller = new ControladorEntradas();
+		controllerEntradas = new ControladorEntradas();
 		
 		Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-		setBounds(Toolkit.getDefaultToolkit().getScreenSize().width/2 - 450/2, Toolkit.getDefaultToolkit().getScreenSize().height/2 - 300/2, 450, 300);
+		setSize(new Dimension(450, 300));
+		setBounds(Toolkit.getDefaultToolkit().getScreenSize().width/2 - (int)this.getSize().getWidth()/2, Toolkit.getDefaultToolkit().getScreenSize().height/2 - (int)this.getSize().getHeight()/2, (int)this.getSize().getWidth(), (int)this.getSize().getHeight());
+//		setBounds(Toolkit.getDefaultToolkit().getScreenSize().width/2 - 450/2, Toolkit.getDefaultToolkit().getScreenSize().height/2 - 300/2, 450, 300);
 		setResizable(false);
 		getContentPane().setLayout(null);
 
@@ -74,12 +68,25 @@ public class SeleccionSesion extends JFrame {
         	}
 		});
 		
-		seleccionSesion.setTitle("Entradas Teatro La Menais - Fecha");
+		seleccionSesion.setTitle("Entradas Teatro La Mennais - Fecha");
 		//icono APP
-		URL pathIcon = seleccionSesion.getClass().getClassLoader().getResource("img/icono-Mene-192x192.png");
 		Toolkit kit = Toolkit.getDefaultToolkit();
-		Image img = kit.createImage(pathIcon);
+		Image img = kit.createImage("img/icono-Mene-192x192.png");
 		seleccionSesion.setIconImage(img);
+		
+		btnConf = new JButton();
+		btnConf.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnConf.setBorderPainted(false);
+		btnConf.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Configuracion(controllerConfiguracion).setVisible(true);
+			}
+		});
+		btnConf.setContentAreaFilled(false);
+		btnConf.setBorder(null);
+		btnConf.setIcon(new ImageIcon("img/gear-48x48.png"));
+		btnConf.setBounds(399, 11, 35, 35);
+		getContentPane().add(btnConf);
 		
 		
 		lblFecha = new JLabel("FECHA:");
@@ -88,11 +95,10 @@ public class SeleccionSesion extends JFrame {
 		lblFecha.setBounds(87, 98, 50, 20);
 		getContentPane().add(lblFecha);
 		
-//		JDateChooser dateChooser = 
 		dateChooser = new JDateChooser(null, new Date(), null, new JSpinnerDateEditor());
 		dateChooser.getCalendarButton().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		dateChooser.setDateFormatString("dd-MM-yyyy");
-		dateChooser.setBounds(147, 98, 100, 20);
+		dateChooser.setBounds(147, 98, 112, 20);
 		getContentPane().add(dateChooser);
 		
 		lblSesion = new JLabel("SESIÓN:");
@@ -104,7 +110,7 @@ public class SeleccionSesion extends JFrame {
 		spinnerSesion = new JSpinner();
 		spinnerSesion.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		spinnerSesion.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
-		spinnerSesion.setBounds(147, 129, 100, 20);
+		spinnerSesion.setBounds(147, 129, 112, 20);
 		getContentPane().add(spinnerSesion);
 		
 		btnComenzar = new JButton("Comenzar");
@@ -112,40 +118,30 @@ public class SeleccionSesion extends JFrame {
 		btnComenzar.setBounds(334, 226, 100, 35);
 		getContentPane().add(btnComenzar);
 		
+		chckbxConNombre = new JCheckBox("Con nombre");
+		chckbxConNombre.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		chckbxConNombre.setBounds(6, 232, 95, 23);
+		getContentPane().add(chckbxConNombre);
+		
 		btnComenzar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				controllerEntradas.setConNombre(chckbxConNombre.isSelected());
 				String fecha = Integer.toString(dateChooser.getCalendar().get(Calendar.YEAR))+ "_" +
 						Integer.toString(dateChooser.getCalendar().get(Calendar.MONTH)+1) + "_" +
 						Integer.toString(dateChooser.getCalendar().get(Calendar.DAY_OF_MONTH));
 				//se crea un plano si no esta creado previamente.
-				controller.crearPlanoSiNoExiste(fecha, spinnerSesion.getValue().toString());
+				controllerEntradas.crearPlanoSiNoExiste(fecha, spinnerSesion.getValue().toString());
 				try {
-					controller.leerPlano(fecha, spinnerSesion.getValue().toString());
+					controllerEntradas.leerPlano(fecha, spinnerSesion.getValue().toString());
+					//se abre el plano de la fecha y sesion.
+					new PlanoTeatro2(controllerEntradas, controllerConfiguracion).setVisible(true);
+					seleccionSesion.setVisible(false);
 				} catch (IOException e) {
 					//TODO mensaje de error al leer los planos
 				}
-				//se abre el plano de la fecha y sesion.
-				new PlanoTeatro2(controller).setVisible(true);
-				seleccionSesion.setVisible(false);
+				
 			}
 		});
 		
-	}
-	private static void addPopup(Component component, final JPopupMenu popup) {
-		component.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			public void mouseReleased(MouseEvent e) {
-				if (e.isPopupTrigger()) {
-					showMenu(e);
-				}
-			}
-			private void showMenu(MouseEvent e) {
-				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-		});
 	}
 }
