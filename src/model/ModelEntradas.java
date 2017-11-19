@@ -3,6 +3,7 @@
  */
 package model;
 
+import java.awt.print.PrinterException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -254,23 +255,14 @@ public class ModelEntradas {
 		}
 	}
 
-	public void imprimir(List<Butaca> seleccionadas) {
+	public void imprimir(List<Butaca> seleccionadas) throws PrinterException {
+		String imprimir = "";
 		Collections.sort(seleccionadas, Butaca.butacaComparator);
 		
-		//cambiar estado en el plano
-		for (List<Butaca> fila : plano) {
-			for (Butaca butaca : fila) {
-				if(butaca.getEstado() == Estado.SELECCIONADA) {
-					butaca.setEstado(Estado.OCUPADA);
-				}
-			}
-		}
-		
-		//guardar en txt 
-		guardarPlano();
-		
+		//imprimir entradas
 		if(conNombre) {
 			System.out.println("A nombre de... " + (this.nombre != null ? this.nombre : "") );
+			imprimir += "A nombre de:" + '\n' + (this.nombre != null ? this.nombre : "") + '\n';
 		}
 		int numFila = 0;
 		Zona zona = null, zonaAnterior = null;
@@ -280,16 +272,20 @@ public class ModelEntradas {
 			if(numFila != butaca.getFila() || zona != butaca.getZona()) {
 				if(fila != null) {
 					System.out.println(String.join(", ", fila));
+					imprimir += String.join(", ", fila) + '\n';
 				}
 				
 				numFila = butaca.getFila();
 				zona = butaca.getZona();
 				if(zonaAnterior != zona) {
 					System.out.println("***" + zona.getDescripcion() + "***");
+					imprimir += "***" + zona.getDescripcion() + "***" + '\n';
 				}
 				zonaAnterior = zona;
 				System.out.println("Fila: " + numFila);
+				imprimir += "Fila: " + numFila + '\n';
 				System.out.print("Butacas: ");
+				imprimir += "Butacas: ";
 				fila = new ArrayList<String>();
 			}
 			fila.add(Integer.toString(butaca.getButaca()));
@@ -297,8 +293,22 @@ public class ModelEntradas {
 		}
 		if(fila != null) {
 			System.out.println(String.join(", ", fila));
+			imprimir += String.join(", ", fila) + '\n';
 		}
 		//System.out.println("Butacas seleccionadas: \n" + seleccionadas);
+		new Imprimir(imprimir);
+		
+		//cambiar estado en el plano
+		for (List<Butaca> filaPlano : plano) {
+			for (Butaca butaca : filaPlano) {
+				if(butaca.getEstado() == Estado.SELECCIONADA) {
+					butaca.setEstado(Estado.OCUPADA);
+				}
+			}
+		}
+		
+		//guardar en txt 
+		guardarPlano();
 		
 	}
 	

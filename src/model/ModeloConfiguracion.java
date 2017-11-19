@@ -13,13 +13,16 @@ import java.util.Properties;
  * @author Pablo
  *
  */
-public class ModeloConfiguracion {
+public class ModeloConfiguracion{
 
 	Properties propiedades;
+	
+	private static ModeloConfiguracion INSTANCE_MODELOCONFIGURACION;
+	
 	/**
 	 * Constructor
-	 */
-	public ModeloConfiguracion() {
+	 */	
+	private ModeloConfiguracion() {
 		try {
 			propiedades = new Properties();
 			propiedades.load(new FileInputStream("properties" + File.separator + "app.properties"));
@@ -31,6 +34,13 @@ public class ModeloConfiguracion {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static ModeloConfiguracion getInstance() {
+		if (INSTANCE_MODELOCONFIGURACION == null) {
+			INSTANCE_MODELOCONFIGURACION = new ModeloConfiguracion();
+		}
+		return INSTANCE_MODELOCONFIGURACION;
 	}
 	
 	/**

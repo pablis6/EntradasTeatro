@@ -29,13 +29,10 @@ import java.awt.Cursor;
  */
 @SuppressWarnings("serial")
 public class Configuracion extends JDialog {
-	private JTextField tfIconoTeatro;
-	private JTextField tfIconoObra;
-	private JLabel lblTamanoButaca, lblIconoteatro, lblIconoObra;
+	private JLabel lblTamanoButaca, lblIconoteatro, lblIconoObra, lblQr;
+	private JTextField tfIconoTeatro, tfIconoObra, tfQrFaceBook;
 	private JSpinner spinTamButaca;
-	private JButton btnGuardar;
-	private JButton btnIconoTeatro;
-	private JButton btnIconoObra;
+	private JButton btnGuardar, btnIconoTeatro, btnIconoObra, btnQrFaceBook;
 	
 	public Configuracion(ControladorConfiguracion controladorConfiguracion) {
 		Configuracion yo = this;
@@ -67,11 +64,13 @@ public class Configuracion extends JDialog {
 		getContentPane().add(lblIconoteatro);
 		
 		tfIconoTeatro = new JTextField(properties.getProperty("ICONO_TEATRO"));
+		tfIconoTeatro.setEditable(false);
 		tfIconoTeatro.setBounds(119, 44, 215, 20);
 		getContentPane().add(tfIconoTeatro);
 		tfIconoTeatro.setColumns(10);
 		
 		btnIconoTeatro = new JButton(new ImageIcon("img/folder-search-23x23.png"));
+		btnIconoTeatro.setFocusPainted(false);
 		btnIconoTeatro.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnIconoTeatro.setContentAreaFilled(false);
 		btnIconoTeatro.setBorder(null);
@@ -89,20 +88,22 @@ public class Configuracion extends JDialog {
 		});
 		
 		lblIconoObra = new JLabel("Icono Obra");
-		lblIconoObra.setBounds(23, 72, 86, 14);
+		lblIconoObra.setBounds(23, 73, 86, 14);
 		getContentPane().add(lblIconoObra);
 		
 		tfIconoObra = new JTextField(properties.getProperty("ICONO_OBRA"));
+		tfIconoObra.setEditable(false);
 		tfIconoObra.setBounds(119, 70, 215, 20);
 		getContentPane().add(tfIconoObra);
 		tfIconoObra.setColumns(10);
 
 		btnIconoObra = new JButton(new ImageIcon("img/folder-search-23x23.png"));
+		btnIconoObra.setFocusPainted(false);
 		btnIconoObra.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnIconoObra.setContentAreaFilled(false);
 		btnIconoObra.setBorder(null);
 		btnIconoObra.setMargin(new Insets(2, 2, 2, 2));
-		btnIconoObra.setBounds(344, 68, 23, 23);
+		btnIconoObra.setBounds(344, 69, 23, 23);
 		getContentPane().add(btnIconoObra);
 		btnIconoObra.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -110,6 +111,34 @@ public class Configuracion extends JDialog {
 				if(fch.showOpenDialog(yo) == JFileChooser.APPROVE_OPTION) {
 					tfIconoObra.setText("img/" + fch.getSelectedFile().getName());
 					properties.setProperty("ICONO_OBRA", "img/" + fch.getSelectedFile().getName());
+				}
+			}
+		});
+
+		lblQr = new JLabel("QR FaceBook");
+		lblQr.setBounds(23, 101, 86, 14);
+		getContentPane().add(lblQr);
+		
+		tfQrFaceBook = new JTextField(properties.getProperty("QR_FACEBOOK"));
+		tfQrFaceBook.setEditable(false);
+		tfQrFaceBook.setColumns(10);
+		tfQrFaceBook.setBounds(119, 98, 215, 20);
+		getContentPane().add(tfQrFaceBook);
+		
+		btnQrFaceBook = new JButton(new ImageIcon("img/folder-search-23x23.png"));
+		btnQrFaceBook.setFocusPainted(false);
+		btnQrFaceBook.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnQrFaceBook.setContentAreaFilled(false);
+		btnQrFaceBook.setBorder(null);
+		btnQrFaceBook.setMargin(new Insets(2, 2, 2, 2));
+		btnQrFaceBook.setBounds(344, 97, 23, 23);
+		getContentPane().add(btnQrFaceBook);
+		btnQrFaceBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fch = new JFileChooser("img");
+				if(fch.showOpenDialog(yo) == JFileChooser.APPROVE_OPTION) {
+					tfQrFaceBook.setText("img/" + fch.getSelectedFile().getName());
+					properties.setProperty("QR_FACEBOOK", "img/" + fch.getSelectedFile().getName());
 				}
 			}
 		});
@@ -126,6 +155,7 @@ public class Configuracion extends JDialog {
 		});
 		btnGuardar.setBounds(335, 216, 89, 35);
 		getContentPane().add(btnGuardar);
+		
 		
 	}
 }

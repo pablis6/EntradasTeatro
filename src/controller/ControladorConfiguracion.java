@@ -13,13 +13,21 @@ import model.ModeloConfiguracion;
  */
 public class ControladorConfiguracion {
 
+	private static ControladorConfiguracion INSTANCE_CONTROLADORCONFIGURACION;
 	private ModeloConfiguracion modeloConf;
 	
 	/**
 	 * Constructor
 	 */
-	public ControladorConfiguracion() {
-		modeloConf = new ModeloConfiguracion();
+	private ControladorConfiguracion() {
+		modeloConf = ModeloConfiguracion.getInstance();
+	}
+	
+	public static ControladorConfiguracion getInstance() {
+		if(INSTANCE_CONTROLADORCONFIGURACION == null) {
+			INSTANCE_CONTROLADORCONFIGURACION = new ControladorConfiguracion();
+		}
+		return INSTANCE_CONTROLADORCONFIGURACION;
 	}
 	
 	/**

@@ -47,14 +47,14 @@ public class SeleccionSesion extends JFrame {
 	private JButton btnConf;
 	private JCheckBox chckbxConNombre;
 	
-	public SeleccionSesion(ControladorConfiguracion controllerConfiguracion) {
+	public SeleccionSesion() {
+		ControladorConfiguracion controllerConfiguracion = ControladorConfiguracion.getInstance();
 		seleccionSesion = this;
-		controllerEntradas = new ControladorEntradas();
+		controllerEntradas = ControladorEntradas.getInstance();
 		
 		Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 		setSize(new Dimension(450, 300));
 		setBounds(Toolkit.getDefaultToolkit().getScreenSize().width/2 - (int)this.getSize().getWidth()/2, Toolkit.getDefaultToolkit().getScreenSize().height/2 - (int)this.getSize().getHeight()/2, (int)this.getSize().getWidth(), (int)this.getSize().getHeight());
-//		setBounds(Toolkit.getDefaultToolkit().getScreenSize().width/2 - 450/2, Toolkit.getDefaultToolkit().getScreenSize().height/2 - 300/2, 450, 300);
 		setResizable(false);
 		getContentPane().setLayout(null);
 
@@ -75,6 +75,7 @@ public class SeleccionSesion extends JFrame {
 		seleccionSesion.setIconImage(img);
 		
 		btnConf = new JButton();
+		btnConf.setFocusPainted(false);
 		btnConf.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnConf.setBorderPainted(false);
 		btnConf.addActionListener(new ActionListener() {
@@ -134,7 +135,7 @@ public class SeleccionSesion extends JFrame {
 				try {
 					controllerEntradas.leerPlano(fecha, spinnerSesion.getValue().toString());
 					//se abre el plano de la fecha y sesion.
-					new PlanoTeatro2(controllerEntradas, controllerConfiguracion).setVisible(true);
+					new PlanoTeatro2().setVisible(true);
 					seleccionSesion.setVisible(false);
 				} catch (IOException e) {
 					//TODO mensaje de error al leer los planos

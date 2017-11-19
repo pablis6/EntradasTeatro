@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,8 +64,10 @@ public class PlanoTeatro2 extends JFrame {
 	private int tamBoton;
 	private int tamBotonEspacio = 0;
 	
-	public PlanoTeatro2(ControladorEntradas ctrlEntradas, ControladorConfiguracion controladorConfiguracion) {
-		controladorEntradas = ctrlEntradas;
+	public PlanoTeatro2() {
+		controladorEntradas = ControladorEntradas.getInstance();
+		ControladorConfiguracion controladorConfiguracion = ControladorConfiguracion.getInstance();
+		
 		tamBoton = Integer.parseInt(controladorConfiguracion.getPropiedades().getProperty("TAM_BUTACA"));
 		tamBotonEspacio = tamBoton+2;
 		
@@ -172,12 +175,20 @@ public class PlanoTeatro2 extends JFrame {
 						String nombre = JOptionPane.showInputDialog(PlanoTeatro2.this, "A nombre de...", "A nombre de...", JOptionPane.QUESTION_MESSAGE);
 						if(nombre != null) {
 							controladorEntradas.setNombre(nombre);
-							controladorEntradas.imprimir(seleccionadas);				
+							try {
+								controladorEntradas.imprimir(seleccionadas);
+							} catch (PrinterException e1) {
+								JOptionPane.showInternalConfirmDialog(PlanoTeatro2.this, "Error al imprimir, puede que la impresora no esté conectada", "Error al imprimir", JOptionPane.ERROR_MESSAGE);
+							}				
 							pintaPlano(controladorEntradas.obtenerPlano());
 						}
 					}
 					else {
-						controladorEntradas.imprimir(seleccionadas);				
+						try {
+							controladorEntradas.imprimir(seleccionadas);
+						} catch (PrinterException e1) {
+							JOptionPane.showInternalConfirmDialog(PlanoTeatro2.this, "Error al imprimir, puede que la impresora no esté conectada", "Error al imprimir", JOptionPane.ERROR_MESSAGE);
+						}				
 						pintaPlano(controladorEntradas.obtenerPlano());
 					}
 				}
@@ -208,6 +219,7 @@ public class PlanoTeatro2 extends JFrame {
 				JButton boton = new JButton();
 				boton.setContentAreaFilled(false);
 				boton.setBorder(null);
+				boton.setFocusPainted(false);
 				boton.setBounds(tamBotonEspacio+(idxcol*tamBotonEspacio), tamBotonEspacio+(idxfil*tamBotonEspacio), tamBoton, tamBoton);
 				
 				if(butaca.getEstado() == Estado.PASILLO) {//cuando es pasillo ponemos el numero de fila

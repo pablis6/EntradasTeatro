@@ -3,6 +3,7 @@
  */
 package controller;
 
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,14 +17,22 @@ import transfer.Zona;
  *
  */
 public class ControladorEntradas {
-
+	
+	private static ControladorEntradas INSTANCE_CONTROLADORENTRADAS;
 	private ModelEntradas modelEntradas;
 	
 	/**
 	 * Contructor del controlador
 	 */
-	public ControladorEntradas() {
+	private ControladorEntradas() {
 		modelEntradas = new ModelEntradas();
+	}
+	
+	public static ControladorEntradas getInstance() {
+		if(INSTANCE_CONTROLADORENTRADAS == null) {
+			INSTANCE_CONTROLADORENTRADAS = new ControladorEntradas();
+		}
+		return INSTANCE_CONTROLADORENTRADAS;
 	}
 	
 	public ArrayList<List<Butaca>> obtenerPlano(){
@@ -38,7 +47,7 @@ public class ControladorEntradas {
 		modelEntradas.leerPlano(fecha, sesion);
 	}
 
-	public void imprimir(List<Butaca> seleccionadas) {
+	public void imprimir(List<Butaca> seleccionadas) throws PrinterException {
 		modelEntradas.imprimir(seleccionadas);
 	}
 

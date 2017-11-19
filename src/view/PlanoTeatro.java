@@ -263,7 +263,7 @@ public class PlanoTeatro extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controladorEntradas.imprimir(seleccionadas);
+//				controladorEntradas.imprimir(seleccionadas);
 				
 				for (JButton boton : botones) {
 					if(boton.getName() == Estado.SELECCIONADA.getDescripcion()) {
