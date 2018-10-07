@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ticket" pageWidth="164" pageHeight="1000" columnWidth="134" leftMargin="15" rightMargin="15" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="c84bcd89-4bc3-455c-89ac-dd2188df30e9">
+	<property name="ireport.zoom" value="1.7715610000000017"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="127"/>
+	<parameter name="Entradas" class="java.lang.String">
+		<defaultValueExpression><![CDATA["***Patio de butacas***\nFila: 7\nButacas: 14, 15\nFila: 8\nButacas: 14, 15\n"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Fecha" class="java.lang.String"/>
+	<parameter name="IconoObra" class="java.lang.String">
+		<defaultValueExpression><![CDATA["I:\\Nueva carpeta\\EntradasTeatro\\img\\LOGO_OBRA_BELLA.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IconoTeatro" class="java.lang.String">
+		<defaultValueExpression><![CDATA["I:\\Nueva carpeta\\EntradasTeatro\\img\\LOGO_TEATRO_MENE.jpg"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CodigoQR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["I:\\Nueva carpeta\\EntradasTeatro\\img\\qr_fb_teatro_grande.png"]]></defaultValueExpression>
+	</parameter>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="106" splitType="Stretch">
+			<image hAlign="Center">
+				<reportElement x="0" y="0" width="134" height="101" uuid="c5e097f5-5f45-4e36-8856-02290c8231ac"/>
+				<imageExpression><![CDATA[$P{IconoObra}
+/*"I:\\Nueva carpeta\\EntradasTeatro\\img\\LOGO_TEATRO_MENE.jpg"*/]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="134" height="14" uuid="616fc71d-4c9b-4dce-99c8-507f1d0dc180"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Entradas}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="114" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="134" height="11" uuid="a9e44cb5-9b01-43f2-8e62-8065bb522567"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Fecha}.concat(" a las 18h")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="11" width="134" height="11" uuid="f24ed838-ea72-4a5b-8b33-1b6ba52d0088"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Entrada gratuita, prohibida su venta"]]></textFieldExpression>
+			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" isLazy="true">
+				<reportElement x="7" y="30" width="121" height="84" uuid="8d1f91d5-59da-4ddf-8206-e58b8d6a6bbe"/>
+				<imageExpression><![CDATA[$P{CodigoQR}
+ /*"I:\\Nueva carpeta\\EntradasTeatro\\img\\qr_fb_teatro_grande.png"*/]]></imageExpression>
+			</image>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="22" width="134" height="11" uuid="d928f0ab-e276-4490-879a-6f1392472c14"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Visitanos en Facebook!"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="56" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="134" height="56" uuid="bde32f73-3b40-4bae-a08c-079608688808"/>
+				<imageExpression><![CDATA[$P{IconoTeatro}
+/*"I:\\Nueva carpeta\\EntradasTeatro\\img\\LOGO_TEATRO_MENE.jpg"*/]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+</jasperReport>
