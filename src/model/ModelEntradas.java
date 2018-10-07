@@ -3,7 +3,6 @@
  */
 package model;
 
-import java.awt.print.PrinterException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +16,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
+import net.sf.jasperreports.engine.JRException;
 import transfer.Butaca;
 import transfer.Estado;
 import transfer.Zona;
@@ -38,11 +41,14 @@ public class ModelEntradas {
 	
 	static final String PLANO_PATIO = "plantillas/Patio de butacas.txt";
 	static final String ENTRESUELO = "plantillas/Entresuelo.txt";
+
+	private static final Logger logger = Logger.getLogger(ModelEntradas.class);
 	
 	/**
 	 * Constructor
 	 */
 	public ModelEntradas() {
+		BasicConfigurator.configure();
 		plano = new ArrayList<List<Butaca>>();
 	}
 	
@@ -255,14 +261,16 @@ public class ModelEntradas {
 		}
 	}
 
-	public void imprimir(List<Butaca> seleccionadas) throws PrinterException {
+	public void imprimir(List<Butaca> seleccionadas, boolean boolImprimir) throws JRException {
+		long t1 = System.currentTimeMillis();
 		String imprimir = "";
 		Collections.sort(seleccionadas, Butaca.butacaComparator);
-		
 		//imprimir entradas
 		if(conNombre) {
-			System.out.println("A nombre de... " + (this.nombre != null ? this.nombre : "") );
 			imprimir += "A nombre de:" + '\n' + (this.nombre != null ? this.nombre : "") + '\n';
+		}
+		else {
+			logger.info("Entradas sin nombre");
 		}
 		int numFila = 0;
 		Zona zona = null, zonaAnterior = null;
@@ -271,20 +279,16 @@ public class ModelEntradas {
 				
 			if(numFila != butaca.getFila() || zona != butaca.getZona()) {
 				if(fila != null) {
-					System.out.println(String.join(", ", fila));
 					imprimir += String.join(", ", fila) + '\n';
 				}
 				
 				numFila = butaca.getFila();
 				zona = butaca.getZona();
 				if(zonaAnterior != zona) {
-					System.out.println("***" + zona.getDescripcion() + "***");
 					imprimir += "***" + zona.getDescripcion() + "***" + '\n';
 				}
 				zonaAnterior = zona;
-				System.out.println("Fila: " + numFila);
 				imprimir += "Fila: " + numFila + '\n';
-				System.out.print("Butacas: ");
 				imprimir += "Butacas: ";
 				fila = new ArrayList<String>();
 			}
@@ -292,11 +296,13 @@ public class ModelEntradas {
 			
 		}
 		if(fila != null) {
-			System.out.println(String.join(", ", fila));
 			imprimir += String.join(", ", fila) + '\n';
 		}
-		//System.out.println("Butacas seleccionadas: \n" + seleccionadas);
-		new Imprimir(imprimir);
+		logger.info(imprimir);
+		
+		if(boolImprimir) {
+			new Imprimir(imprimir, this.nombre);
+		}
 		
 		//cambiar estado en el plano
 		for (List<Butaca> filaPlano : plano) {
@@ -309,7 +315,12 @@ public class ModelEntradas {
 		
 		//guardar en txt 
 		guardarPlano();
+
+		logger.info("");
 		
+		long t2 = System.currentTimeMillis();
+		
+		System.out.println( "(" + (t2-t1) + ") = "+(t2-t1)/1000+"s "+(t2-t1)%1000);
 	}
 	
 	public void guardarPlano() {
@@ -330,7 +341,7 @@ public class ModelEntradas {
 				int numFila = lista.get(0).getFila();
 				NumberFormat formatter = new DecimalFormat("00");  
 				
-				planoGuardar = (lista.get(0).getEstado() != Estado.VACIO) ? "F" + formatter.format(numFila) : "";
+				planoGuardar = (/*lista.get(0).getEstado() != Estado.VACIO || */lista.size()>1) ? "F" + formatter.format(numFila) : "";
 				for (Butaca butaca : lista) {
 					String numeroButaca = (butaca.getEstado() != Estado.PASILLO && butaca.getEstado() != Estado.VACIO) ? formatter.format(butaca.getButaca()):"";
 					planoGuardar += butaca.getEstado().getId() + numeroButaca; 
@@ -364,15 +375,15 @@ public class ModelEntradas {
 	}
 
 	public void setButacaPlano(Butaca butacaMod) {
-		for (List<Butaca> fila : plano) {
-			for (Butaca butaca : fila) {
-				if(butaca.getZona() == butacaMod.getZona() && 
-						butaca.getFila() == butacaMod.getFila() && 
-						butaca.getButaca() == butacaMod.getButaca()) {
-					butaca.setEstado(butacaMod.getEstado());
-				}
-			}
-		}
+//		for (List<Butaca> fila : plano) {
+//			for (Butaca butaca : fila) {
+//				if(butaca.getZona() == butacaMod.getZona() && 
+//						butaca.getFila() == butacaMod.getFila() && 
+//						butaca.getButaca() == butacaMod.getButaca()) {
+//					butaca.setEstado(butacaMod.getEstado());
+//				}
+//			}
+//		}
 		//guardar en txt 
 		guardarPlano();
 	}
@@ -399,5 +410,6 @@ public class ModelEntradas {
 		}
 		return contador;
 	}
+
 
 }

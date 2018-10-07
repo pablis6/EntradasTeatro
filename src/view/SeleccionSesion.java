@@ -16,9 +16,11 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Properties;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,17 +28,18 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
+import org.apache.log4j.PropertyConfigurator;
+
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JSpinnerDateEditor;
 
-import controller.ControladorConfiguracion;
 import controller.ControladorEntradas;
-import javax.swing.JCheckBox;
 
 /**
  * @author Pablo
  *
  */
+@SuppressWarnings("serial")
 public class SeleccionSesion extends JFrame {
 	private JLabel lblFecha, lblSesion;
 	private JSpinner spinnerSesion;
@@ -48,7 +51,6 @@ public class SeleccionSesion extends JFrame {
 	private JCheckBox chckbxConNombre;
 	
 	public SeleccionSesion() {
-		ControladorConfiguracion controllerConfiguracion = ControladorConfiguracion.getInstance();
 		seleccionSesion = this;
 		controllerEntradas = ControladorEntradas.getInstance();
 		
@@ -80,7 +82,7 @@ public class SeleccionSesion extends JFrame {
 		btnConf.setBorderPainted(false);
 		btnConf.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Configuracion(controllerConfiguracion).setVisible(true);
+				Configuracion.getInstance().setVisible(true);
 			}
 		});
 		btnConf.setContentAreaFilled(false);
@@ -99,7 +101,7 @@ public class SeleccionSesion extends JFrame {
 		dateChooser = new JDateChooser(null, new Date(), null, new JSpinnerDateEditor());
 		dateChooser.getCalendarButton().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		dateChooser.setDateFormatString("dd-MM-yyyy");
-		dateChooser.setBounds(147, 98, 112, 20);
+		dateChooser.setBounds(147, 98, 129, 20);
 		getContentPane().add(dateChooser);
 		
 		lblSesion = new JLabel("SESIÓN:");
@@ -111,7 +113,7 @@ public class SeleccionSesion extends JFrame {
 		spinnerSesion = new JSpinner();
 		spinnerSesion.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		spinnerSesion.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
-		spinnerSesion.setBounds(147, 129, 112, 20);
+		spinnerSesion.setBounds(147, 129, 129, 20);
 		getContentPane().add(spinnerSesion);
 		
 		btnComenzar = new JButton("Comenzar");
@@ -121,21 +123,25 @@ public class SeleccionSesion extends JFrame {
 		
 		chckbxConNombre = new JCheckBox("Con nombre");
 		chckbxConNombre.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		chckbxConNombre.setBounds(6, 232, 95, 23);
+		chckbxConNombre.setBounds(6, 232, 137, 23);
 		getContentPane().add(chckbxConNombre);
 		
 		btnComenzar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				controllerEntradas.setConNombre(chckbxConNombre.isSelected());
 				String fecha = Integer.toString(dateChooser.getCalendar().get(Calendar.YEAR))+ "_" +
-						Integer.toString(dateChooser.getCalendar().get(Calendar.MONTH)+1) + "_" +
-						Integer.toString(dateChooser.getCalendar().get(Calendar.DAY_OF_MONTH));
+						String.format("%02d", dateChooser.getCalendar().get(Calendar.MONTH)+1) + "_" +
+						String.format("%02d", dateChooser.getCalendar().get(Calendar.DAY_OF_MONTH));
+
+				Properties p = System.getProperties();
+				p.put("log.name", fecha+"-"+spinnerSesion.getValue().toString());
+				PropertyConfigurator.configure("properties/log4j.properties");
 				//se crea un plano si no esta creado previamente.
 				controllerEntradas.crearPlanoSiNoExiste(fecha, spinnerSesion.getValue().toString());
 				try {
 					controllerEntradas.leerPlano(fecha, spinnerSesion.getValue().toString());
 					//se abre el plano de la fecha y sesion.
-					new PlanoTeatro2().setVisible(true);
+					PlanoTeatro2.getInstance().setVisible(true);
 					seleccionSesion.setVisible(false);
 				} catch (IOException e) {
 					//TODO mensaje de error al leer los planos

@@ -3,12 +3,12 @@
  */
 package controller;
 
-import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.ModelEntradas;
+import net.sf.jasperreports.engine.JRException;
 import transfer.Butaca;
 import transfer.Zona;
 
@@ -47,8 +47,16 @@ public class ControladorEntradas {
 		modelEntradas.leerPlano(fecha, sesion);
 	}
 
-	public void imprimir(List<Butaca> seleccionadas) throws PrinterException {
-		modelEntradas.imprimir(seleccionadas);
+	public void imprimir(List<Butaca> seleccionadas) throws JRException {
+		modelEntradas.imprimir(seleccionadas, true);
+	}
+
+	public void marcarOcupado(List<Butaca> seleccionadas) {
+		try {
+			modelEntradas.imprimir(seleccionadas, false);
+		} catch (JRException e) {
+			//nunca se va a dar la excepcion porque el booleano impide la seccion donde se produce
+		}
 	}
 
 	public int countFilas(Zona zona) {

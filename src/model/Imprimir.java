@@ -1,112 +1,59 @@
-/**
- * 
- */
 package model;
 
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.print.PageFormat;
-import java.awt.print.Paper;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
-import java.awt.print.PrinterJob;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.attribute.Attribute;
-import javax.print.attribute.PrintServiceAttribute;
-import javax.print.attribute.standard.PrinterState;
-import javax.print.event.PrintServiceAttributeEvent;
-import javax.print.event.PrintServiceAttributeListener;
-import javax.swing.ImageIcon;
+import java.util.HashMap;
+import java.util.Map;
 
 import controller.ControladorConfiguracion;
+import controller.ControladorEntradas;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrintManager;
 
-/**
- * @author Pablo
- *
- */
-public class Imprimir implements Printable {
-	private String textoImprimir;
-	private Image logoTeatro, logoObra, qrFbTeatro;
+public class Imprimir{
+
 	/**
-	 * @throws PrinterException 
-	 * 
+	 * Imprime las entradas del teatro
+	 * @param textoImprimir el texto de las entradas
+	 * @param nombre a quien van dirigidas
+	 * @throws JRException
 	 */
-	public Imprimir(String textoImprimir) throws PrinterException {
-		this.textoImprimir = textoImprimir;
+	public Imprimir(String textoImprimir, String nombre) throws JRException {
 		ControladorConfiguracion controladorConfiguracion = ControladorConfiguracion.getInstance();
-		logoTeatro = new ImageIcon(controladorConfiguracion.getPropiedades().getProperty("ICONO_TEATRO")).getImage();
-		logoObra = new ImageIcon(controladorConfiguracion.getPropiedades().getProperty("ICONO_OBRA")).getImage();
-		qrFbTeatro = new ImageIcon(controladorConfiguracion.getPropiedades().getProperty("QR_FACEBOOK")).getImage();
+		ControladorEntradas controladorEntradas = ControladorEntradas.getInstance();
 		
-		PrinterJob pj = PrinterJob.getPrinterJob();
+		String fecha = controladorEntradas.getFecha();
+		LocalDate diaValido = LocalDate.of(Integer.parseInt(fecha.substring(0, 4)), Integer.parseInt(fecha.substring(5, 7)), Integer.parseInt(fecha.substring(8, 10))) ;
+		String diaValidoString = diaValido.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
 		
-//		PrintService printService = pj.getPrintService();
-		PageFormat pageFormat = new PageFormat();
-		Paper papel = new Paper(); 
-		papel.setImageableArea(14.0, 2.8, 136.0, 583.0);
-		pageFormat.setPaper(papel);
+//		String defaultPrinter = PrintServiceLookup.lookupDefaultPrintService().getName();
+//	    System.out.println("Default printer: " + defaultPrinter);
+		String sourceFileName = new File("plantillas/ticket.jasper").getAbsolutePath();
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("Entradas", textoImprimir);
+		parameters.put("Fecha", "Validez: " + diaValidoString);
+		parameters.put("IconoObra", new File(controladorConfiguracion.getPropiedades().getProperty("ICONO_OBRA")).getAbsolutePath());
+		parameters.put("IconoTeatro", new File(controladorConfiguracion.getPropiedades().getProperty("ICONO_TEATRO")).getAbsolutePath());
+		parameters.put("CodigoQR", new File(controladorConfiguracion.getPropiedades().getProperty("QR_FACEBOOK")).getAbsolutePath());
+		String printFileName = JasperFillManager.fillReportToFile(sourceFileName, parameters, new JREmptyDataSource());
+		JasperPrintManager.printReport(printFileName, false);
 		
-		pj.setPrintable(this, pageFormat);
-		pj.print();
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.print.Printable#print(java.awt.Graphics, java.awt.print.PageFormat, int)
-	 */
-	@Override
-	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex) throws PrinterException {
-		if (pageIndex == 0) {
-			FontMetrics fontMetrics;
-			Graphics2D g2d = (Graphics2D) graphics;
-		    g2d.translate (pageFormat.getImageableX (), pageFormat.getImageableY ());
-		    g2d.setFont(new Font(g2d.getFont().getFontName(), Font.PLAIN, 10));
-	    	fontMetrics = g2d.getFontMetrics(); 
-		    
-		    //imprimimos los iconos en 40x40
-			graphics.drawImage(logoTeatro, ((int)pageFormat.getImageableWidth()/2 + 10 - 40 -2), 10, 40, 40, null);
-			graphics.drawImage(logoObra, ((int)pageFormat.getImageableWidth()/2) + 10 +2, 10, 40, 40, null);
-		    int y = 45;
-		    
-		    for (String line : textoImprimir.split("\n")) {
-		    	graphics.drawString(line, (int) ((pageFormat.getImageableWidth() - fontMetrics.stringWidth(line))/2), y += fontMetrics.getHeight()	);
-		    }
-		    
-		    //imprimir fecha y entrada gratuita
-		    LocalDate hoy = LocalDate.now();
-		    String dia = hoy.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"));
-		    graphics.drawString("Valido para", (int) ((pageFormat.getImageableWidth() - fontMetrics.stringWidth("Valido para"))/2), y += fontMetrics.getHeight()	);
-		    graphics.drawString(dia, (int) ((pageFormat.getImageableWidth() - fontMetrics.stringWidth(dia))/2), y += fontMetrics.getHeight()	);
-		    
-		    g2d.setFont(new Font(g2d.getFont().getFontName(), Font.PLAIN, 8));
-		    fontMetrics = g2d.getFontMetrics();
-		    graphics.drawString("Entrada gratuita, prohibida su venta", (int) ((pageFormat.getImageableWidth() - fontMetrics.stringWidth("Entrada gratuita, prohibida su venta"))/2), y += fontMetrics.getHeight()	);		    
-		    
-		    //imprimir codigo qr
-			graphics.drawImage(qrFbTeatro, ((int) (pageFormat.getImageableWidth() - 90) /2), y += fontMetrics.getHeight(), 90, 90, null);
-			
-			return PAGE_EXISTS;
-		}
-		else {
-			return NO_SUCH_PAGE;
-		}
+		//Guardar en PDF
+//		if(nombre != null && !nombre.equals("")) {
+//			File directorio=new File("entradas/"+fecha); 
+//			directorio.mkdir();
+//			int index = 0;
+//			File archivo;
+//			do {
+//				index++;
+//				archivo = new File("entradas/"+fecha+"/"+nombre+"_"+index+".pdf");
+//			}
+//			while(archivo.exists());
+//			JasperExportManager.exportReportToPdfFile(printFileName, "entradas/"+fecha+"/"+nombre+"_"+index+".pdf");
+//		}
 	}
 
 }
-class MyPrintServiceAttributeListener implements PrintServiceAttributeListener {
-	  public void attributeUpdate(PrintServiceAttributeEvent psae) {
-	    PrintService service = psae.getPrintService();
-	    Attribute[] attrs = psae.getAttributes().toArray();
-	    for (int i = 0; i < attrs.length; i++) {
-	      String attrName = attrs[i].getName();
-	      String attrValue = attrs[i].toString();
-	    }
-	  }
-	}

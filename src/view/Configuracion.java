@@ -3,6 +3,7 @@
  */
 package view;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Insets;
@@ -21,7 +22,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 import controller.ControladorConfiguracion;
-import java.awt.Cursor;
 
 /**
  * @author Pablo
@@ -33,8 +33,20 @@ public class Configuracion extends JDialog {
 	private JTextField tfIconoTeatro, tfIconoObra, tfQrFaceBook;
 	private JSpinner spinTamButaca;
 	private JButton btnGuardar, btnIconoTeatro, btnIconoObra, btnQrFaceBook;
+	private static Configuracion INSTANCE_CONFIGURACION;
 	
-	public Configuracion(ControladorConfiguracion controladorConfiguracion) {
+	public static Configuracion getInstance() {
+		if(INSTANCE_CONFIGURACION == null) {
+			INSTANCE_CONFIGURACION = new Configuracion();
+		}
+		return INSTANCE_CONFIGURACION;
+	}
+	
+	/**
+	 * Constructor
+	 */
+	private Configuracion() {
+		ControladorConfiguracion controladorConfiguracion = ControladorConfiguracion.getInstance();
 		Configuracion yo = this;
 		
 		setModal(true);
