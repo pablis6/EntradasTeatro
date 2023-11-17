@@ -185,9 +185,14 @@ public class PlanoTeatro2 extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println(seleccionadas);
 				if(seleccionadas.size() > 0) {
+					if(controladorEntradas.isConNombre()){
+						String nombre = JOptionPane.showInputDialog(PlanoTeatro2.this, "A nombre de...", "A nombre de...", JOptionPane.QUESTION_MESSAGE);
+						controladorEntradas.setNombre(nombre);
+					}	
 					controladorEntradas.marcarOcupado(seleccionadas);
-									
 					pintaPlano(controladorEntradas.obtenerPlano());
+					btnOcuparSinImprimir.setText("Marcar");
+					btnImprimir.setText("Imprimir");
 				}
 				seleccionadas = new ArrayList<Butaca>();
 			}
@@ -219,25 +224,16 @@ public class PlanoTeatro2 extends JFrame {
 				if(seleccionadas.size() > 0) {
 					if(controladorEntradas.isConNombre()){
 						String nombre = JOptionPane.showInputDialog(PlanoTeatro2.this, "A nombre de...", "A nombre de...", JOptionPane.QUESTION_MESSAGE);
-						if(nombre != null) {
-							controladorEntradas.setNombre(nombre);
-							try {
-								controladorEntradas.imprimir(seleccionadas);
-							} catch (JRException e1) {
-								JOptionPane.showMessageDialog(PlanoTeatro2.this, "Error al imprimir, la plantilla no es correcta", "Error al imprimir", JOptionPane.ERROR_MESSAGE);
-							} 			
-							pintaPlano(controladorEntradas.obtenerPlano());
-						}
+						controladorEntradas.setNombre(nombre);
 					}
-					else {
-						try {
-							controladorEntradas.imprimir(seleccionadas);
-						} catch (JRException e1 ) {
-							JOptionPane.showMessageDialog(PlanoTeatro2.this, "Error al imprimir, la plantilla no es correcta", "Error al imprimir", JOptionPane.ERROR_MESSAGE);
-						}
-										
-						pintaPlano(controladorEntradas.obtenerPlano());
+					try {
+						controladorEntradas.imprimir(seleccionadas);
+					} catch (JRException e1 ) {
+						JOptionPane.showMessageDialog(PlanoTeatro2.this, "Error al imprimir, la plantilla no es correcta", "Error al imprimir", JOptionPane.ERROR_MESSAGE);
 					}
+					pintaPlano(controladorEntradas.obtenerPlano());
+					btnOcuparSinImprimir.setText("Marcar");
+					btnImprimir.setText("Imprimir");
 				}
 				seleccionadas = new ArrayList<Butaca>();
 			}
@@ -341,6 +337,7 @@ public class PlanoTeatro2 extends JFrame {
 										}
 									}
 								}
+								
 								pintaPlano(plano);
 							}
 						}
@@ -420,7 +417,13 @@ public class PlanoTeatro2 extends JFrame {
 						Image icono = kit.createImage(butaca.getEstado().getImg()).getScaledInstance(tamBoton, tamBoton, Image.SCALE_SMOOTH);
 						boton.setIcon(new ImageIcon(icono));
 						//System.out.println("zona: " + butaca.getZona() + " fila: " + butaca.getFila() + " butaca: " + butaca.getButaca());
-												
+						
+						String buttonText = "";
+						if(seleccionadas.size() != 0) {
+							buttonText += " (" + seleccionadas.size() + ")";
+						}
+						btnOcuparSinImprimir.setText("Marcar" + buttonText);
+						btnImprimir.setText("Imprimir" + buttonText);
 					}
 				});
 				
@@ -428,6 +431,15 @@ public class PlanoTeatro2 extends JFrame {
 				butacaAnterior = butaca;
 			}
 			idxfil++;
+		}
+		
+		String buttonText = "";
+		if(btnOcuparSinImprimir != null) {
+			if(seleccionadas.size() != 0) {
+				buttonText += " (" + seleccionadas.size() + ")";
+			}
+			btnOcuparSinImprimir.setText("Marcar" + buttonText);
+			btnImprimir.setText("Imprimir" + buttonText);
 		}
 		
 		//forzamos el repintado
