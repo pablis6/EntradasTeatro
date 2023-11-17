@@ -48,6 +48,7 @@ public class SeleccionSesion extends JFrame {
 	private SeleccionSesion seleccionSesion;
 	private ControladorEntradas controllerEntradas;
 	private JButton btnConf;
+	private JButton btnGenerarInforme;
 	private JCheckBox chckbxConNombre;
 	
 	public SeleccionSesion() {
@@ -88,7 +89,7 @@ public class SeleccionSesion extends JFrame {
 		btnConf.setContentAreaFilled(false);
 		btnConf.setBorder(null);
 		btnConf.setIcon(new ImageIcon("img/gear-48x48.png"));
-		btnConf.setBounds(399, 11, 35, 35);
+		btnConf.setBounds(390, 11, 35, 35);
 		getContentPane().add(btnConf);
 		
 		
@@ -116,15 +117,21 @@ public class SeleccionSesion extends JFrame {
 		spinnerSesion.setBounds(147, 129, 129, 20);
 		getContentPane().add(spinnerSesion);
 		
-		btnComenzar = new JButton("Comenzar");
-		btnComenzar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnComenzar.setBounds(334, 226, 100, 35);
-		getContentPane().add(btnComenzar);
+		btnGenerarInforme = new JButton("Generar informe");
+		btnGenerarInforme.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnGenerarInforme.setBounds(8, 220, 120, 35);
+//		getContentPane().add(btnGenerarInforme);
 		
 		chckbxConNombre = new JCheckBox("Con nombre");
+		chckbxConNombre.setSelected(true);
 		chckbxConNombre.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		chckbxConNombre.setBounds(6, 232, 137, 23);
+		chckbxConNombre.setBounds(328, 195, 137, 23);
 		getContentPane().add(chckbxConNombre);
+		
+		btnComenzar = new JButton("Comenzar");
+		btnComenzar.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnComenzar.setBounds(328, 220, 100, 35);
+		getContentPane().add(btnComenzar);
 		
 		btnComenzar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

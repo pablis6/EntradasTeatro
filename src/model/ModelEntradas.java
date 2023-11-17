@@ -288,18 +288,17 @@ public class ModelEntradas {
 				numFila = butaca.getFila();
 				zona = butaca.getZona();
 				if (zonaAnterior != zona) {
-					imprimir += "***" + zona.getDescripcion() + "***" + '\n';
+					imprimir += "    ***" + zona.getDescripcion() + "***" + '\n';
 				}
 				zonaAnterior = zona;
-				imprimir += "Fila: " + numFila + '\n';
-				imprimir += "Butacas: ";
+				imprimir += "    Fila: " + numFila + " Butacas: ";
 				fila = new ArrayList<String>();
 			}
 			fila.add(Integer.toString(butaca.getButaca()));
 
 		}
 		if (fila != null) {
-			imprimir += String.join(", ", fila) + '\n';
+			imprimir += String.join(", ", fila);
 		}
 		logger.info(imprimir);
 
@@ -319,11 +318,11 @@ public class ModelEntradas {
 		// guardar en txt
 		guardarPlano();
 
-		logger.info("");
+//		logger.info("");
 
 		long t2 = System.currentTimeMillis();
 
-		System.out.println("(" + (t2 - t1) + ") = " + (t2 - t1) / 1000 + "s " + (t2 - t1) % 1000);
+		System.out.println("(" + (t2 - t1) + ") = " + (t2 - t1) / 1000 + "s " + (t2 - t1) % 1000 + "ms");
 	}
 
 	public void guardarPlano() {
